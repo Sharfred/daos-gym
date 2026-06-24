@@ -38,7 +38,7 @@ app.use('/api/stats', authMiddleware, statsRoutes);
 app.use(express.static(path.join(__dirname, '..')));
 
 // Ruta catch-all: siempre devuelve index.html para rutas no-API
-app.get('*', (req, res) => {
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
