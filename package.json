@@ -1,0 +1,12 @@
+{
+  "name": "daos-gym-root",
+  "version": "1.0.0",
+  "description": "Raíz del proyecto para detección en Railway",
+  "scripts": {
+    "build": "cd backend && npm install",
+    "start": "cd backend && node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
