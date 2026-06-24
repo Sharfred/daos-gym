@@ -418,3 +418,45 @@ setupCrud('Pagos', '/pagos',
 if (getToken()) {
     loadDashboard();
 }
+
+// Registro Público Intercept
+document.addEventListener('DOMContentLoaded', () => {
+    const formRegistro = document.getElementById('formRegistroPublico');
+    if (formRegistro) {
+        formRegistro.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnRegistroPublico');
+            const originalText = btn.innerText;
+            btn.innerText = 'Registrando...';
+            btn.disabled = true;
+            
+            const payload = {
+                nombre: document.getElementById('regPublicoNombre').value,
+                apellido_p: document.getElementById('regPublicoApP').value,
+                apellido_m: document.getElementById('regPublicoApM').value,
+                edad: document.getElementById('regPublicoEdad').value
+            };
+            
+            try {
+                const res = await fetch(API + '/publico/registro-cliente', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.ok) {
+                    showToast('¡Registro exitoso! Te esperamos en el gimnasio.', 'success');
+                    formRegistro.reset();
+                } else {
+                    const data = await res.json();
+                    showToast(data.error || 'Error al registrar', 'error');
+                }
+            } catch(error) {
+                showToast('Error de conexión', 'error');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        });
+    }
+});
