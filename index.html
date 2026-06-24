@@ -1,0 +1,2438 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DAO'S GYM — Strength & Fitness</title>
+    <meta
+      name="description"
+      content="Sistema de gestión digital para DAO'S GYM. Registro de clientes, membresías y pagos."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #0f1117;
+        --surface: #1a1d27;
+        --surface-hover: #22263a;
+        --gold: #c5a55a;
+        --gold-light: #d4b96e;
+        --gold-glow: rgba(197, 165, 90, 0.15);
+        --purple: #6c5ce7;
+        --purple-glow: rgba(108, 92, 231, 0.15);
+        --accent: #6c5ce7;
+        --accent-glow: rgba(108, 92, 231, 0.1);
+        --success: #00b894;
+        --danger: #e74c3c;
+        --warning: #f39c12;
+        --text: #e0e0e0;
+        --text-muted: #8b8fa3;
+        --border: #2a2e3b;
+        --radius: 12px;
+      }
+
+      [data-theme="light"] {
+        --bg: #f8f9fa;
+        --surface: #ffffff;
+        --surface-hover: #f1f3f5;
+        --gold: #b38b36;
+        --gold-light: #c5a55a;
+        --gold-glow: rgba(197, 165, 90, 0.2);
+        --purple: #5a4bd1;
+        --purple-glow: rgba(108, 92, 231, 0.15);
+        --accent: #5a4bd1;
+        --accent-glow: rgba(108, 92, 231, 0.1);
+        --text: #212529;
+        --text-muted: #495057;
+        --border: #dee2e6;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* ─── NAVBAR ─────────────────────────────── */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 40px;
+        background: rgba(15, 17, 23, 0.8);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .navbar-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
+      .navbar-logo img {
+        height: 44px;
+        border-radius: 8px;
+      }
+      .navbar-logo span {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--gold);
+        letter-spacing: 1px;
+      }
+
+      .navbar-links {
+        display: flex;
+        gap: 28px;
+        list-style: none;
+        align-items: center;
+      }
+      .navbar-links a {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+      .navbar-links a:hover {
+        color: var(--gold);
+      }
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--text);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      .theme-toggle {
+        background: none;
+        border: none;
+        color: var(--gold);
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 4px;
+      }
+
+      /* ─── HERO ───────────────────────────────── */
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 120px 20px 80px;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(15, 17, 23, 0.4) 0%,
+            rgba(15, 17, 23, 0.95) 100%
+          ),
+          url("img/hero-bg.png") center/cover no-repeat;
+      }
+
+      .hero-content {
+        max-width: 700px;
+      }
+      .hero-content img {
+        height: 120px;
+        margin-bottom: 24px;
+        border-radius: 16px;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--gold), var(--gold-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+      }
+
+      .hero h2 {
+        font-size: clamp(1rem, 2vw, 1.4rem);
+        font-weight: 500;
+        color: var(--purple);
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        margin-bottom: 24px;
+      }
+
+      .hero p {
+        font-size: 1.05rem;
+        color: var(--text-muted);
+        max-width: 540px;
+        margin: 0 auto 32px;
+      }
+
+      .btn-cta {
+        display: inline-block;
+        padding: 14px 36px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        background: linear-gradient(135deg, var(--gold), var(--gold-light));
+        color: #0f1117;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .btn-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px var(--gold-glow);
+      }
+
+      /* ─── SECCIONES ──────────────────────────── */
+      .section {
+        padding: 80px 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .section-title {
+        font-size: clamp(1.5rem, 3vw, 2.25rem);
+        font-weight: 700;
+        margin-bottom: 12px;
+        background: linear-gradient(135deg, var(--gold), var(--gold-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .section-subtitle {
+        color: var(--text-muted);
+        font-size: 1rem;
+        margin-bottom: 36px;
+      }
+
+      .section p {
+        color: var(--text);
+        margin-bottom: 16px;
+        line-height: 1.8;
+      }
+
+      .section h3 {
+        font-size: clamp(1.1rem, 2vw, 1.4rem);
+        font-weight: 600;
+        color: var(--gold-light);
+        margin: 32px 0 16px;
+        border-left: 3px solid var(--gold);
+        padding-left: 12px;
+      }
+
+      .section ol,
+      .section ul {
+        margin: 0 0 24px 20px;
+        color: var(--text);
+      }
+      .section li {
+        margin-bottom: 12px;
+        line-height: 1.7;
+      }
+      .section li strong {
+        color: var(--gold-light);
+      }
+
+      /* ─── DIVIDER ────────────────────────────── */
+      .divider {
+        height: 1px;
+        max-width: 1200px;
+        margin: 0 auto;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--border),
+          transparent
+        );
+      }
+
+      /* ─── CARDS MEMBRESÍAS ───────────────────── */
+      .membership-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 28px;
+        margin-top: 36px;
+      }
+
+      .membership-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 40px 32px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.3s,
+          border-color 0.3s;
+      }
+      .membership-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--gold);
+      }
+      .membership-card.featured {
+        border-color: var(--gold);
+      }
+      .membership-card.featured::before {
+        content: "POPULAR";
+        position: absolute;
+        top: 16px;
+        right: -30px;
+        background: var(--gold);
+        color: #0f1117;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 4px 40px;
+        transform: rotate(45deg);
+      }
+
+      .membership-card h4 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--gold-light);
+        margin-bottom: 8px;
+      }
+      .membership-card .price {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text);
+        margin: 16px 0;
+      }
+      .membership-card .price span {
+        font-size: 1rem;
+        color: var(--text-muted);
+        font-weight: 400;
+      }
+      .membership-card .period {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+      }
+      .membership-card ul {
+        list-style: none;
+        text-align: left;
+        margin: 0 0 28px 0;
+        padding: 0;
+      }
+      .membership-card li {
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+      .membership-card li::before {
+        content: "✓ ";
+        color: var(--success);
+        font-weight: 700;
+      }
+
+      /* ─── ENTREVISTA ─────────────────────────── */
+      .interview-grid {
+        display: grid;
+        gap: 16px;
+        margin-top: 24px;
+      }
+      .interview-item {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px 24px;
+      }
+      .interview-item .question {
+        color: var(--gold-light);
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+      }
+      .interview-item .answer {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* ─── MER / MODELO ER ────────────────────── */
+      .model-container {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 32px;
+        margin-top: 24px;
+        overflow-x: auto;
+      }
+      .model-container h4 {
+        color: var(--gold-light);
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+      }
+      .model-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      .model-table th {
+        background: var(--bg);
+        color: var(--gold);
+        padding: 10px 14px;
+        text-align: left;
+        border: 1px solid var(--border);
+      }
+      .model-table td {
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+      }
+
+      /* ─── CRUD SECTION ───────────────────────── */
+      .crud-section {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 80px 40px;
+      }
+      .crud-layout {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 28px;
+        align-items: start;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+      }
+      .card-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-title .icon {
+        font-size: 1.4rem;
+      }
+
+      /* Search by ID */
+      .search-id-box {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .search-id-box input {
+        flex: 1;
+        padding: 10px 14px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.9rem;
+        transition: border-color 0.2s;
+      }
+      .search-id-box input:focus {
+        outline: none;
+        border-color: var(--purple);
+        box-shadow: 0 0 0 3px var(--purple-glow);
+      }
+      .search-id-box button {
+        padding: 10px 16px;
+        background: var(--purple);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.2s;
+      }
+      .search-id-box button:hover {
+        background: #5a4bd1;
+      }
+
+      /* Form fields */
+      .form-group {
+        margin-bottom: 16px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 10px 14px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.9rem;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      .form-group input:focus {
+        outline: none;
+        border-color: var(--purple);
+        box-shadow: 0 0 0 3px var(--purple-glow);
+      }
+      .field-error {
+        color: var(--danger);
+        font-size: 0.8rem;
+        margin-top: 4px;
+        min-height: 18px;
+      }
+
+      /* Buttons */
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          transform 0.15s,
+          opacity 0.2s;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .btn-primary {
+        background: var(--purple);
+        color: #fff;
+      }
+      .btn-secondary {
+        background: var(--surface-hover);
+        color: var(--text-muted);
+      }
+      .btn-warning {
+        background: var(--warning);
+        color: #0f1117;
+      }
+      .btn-danger {
+        background: var(--danger);
+        color: #fff;
+      }
+      .form-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      /* Selection info */
+      .selection-info {
+        display: none;
+        margin-top: 16px;
+        padding: 12px;
+        background: var(--purple-glow);
+        border: 1px solid var(--purple);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: var(--purple);
+      }
+      .selection-info.show {
+        display: block;
+      }
+      .crud-actions {
+        display: none;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .crud-actions.show {
+        display: flex;
+      }
+
+      /* Table panel */
+      .table-search {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding: 10px 14px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+      .table-search svg {
+        width: 18px;
+        height: 18px;
+        stroke: var(--text-muted);
+        flex-shrink: 0;
+      }
+      .table-search input {
+        flex: 1;
+        background: none;
+        border: none;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.9rem;
+        outline: none;
+      }
+
+      .record-count {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+      }
+      thead th {
+        background: var(--bg);
+        color: var(--gold);
+        padding: 12px 14px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid var(--border);
+        position: sticky;
+        top: 0;
+      }
+      tbody td {
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-muted);
+      }
+      tbody tr {
+        transition: background 0.15s;
+        cursor: pointer;
+      }
+      tbody tr:hover {
+        background: var(--surface-hover);
+      }
+      tbody tr.selected {
+        background: var(--accent-glow);
+        border-left: 3px solid var(--accent);
+      }
+      .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-muted);
+      }
+
+      /* ─── TABS & DASHBOARD ───────────────────── */
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 24px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+      }
+      .tab-btn {
+        padding: 10px 20px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+      }
+      .tab-btn:hover {
+        background: var(--surface-hover);
+        color: var(--text);
+      }
+      .tab-btn.active {
+        background: var(--purple);
+        color: #fff;
+        border-color: var(--purple);
+      }
+
+      .tab-content {
+        display: none;
+        animation: fadeIn 0.3s ease;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .dashboard-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 32px;
+      }
+      .dash-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        text-align: center;
+      }
+      .dash-card h4 {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+      }
+      .dash-card .value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--gold);
+      }
+      .chart-container {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      /* Loader */
+      .loader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px;
+        gap: 12px;
+      }
+      .spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid var(--border);
+        border-top-color: var(--purple);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Scroll Animations */
+      .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 0.6s ease-out,
+          transform 0.6s ease-out;
+      }
+      .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Toast */
+      .toast-container {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .toast {
+        padding: 14px 20px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        animation: slideIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      }
+      .toast.exito {
+        background: #0d3b2e;
+        color: #6ee7b7;
+        border: 1px solid #065f46;
+      }
+      .toast.error {
+        background: #3b0d0d;
+        color: #fca5a5;
+        border: 1px solid #7f1d1d;
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateX(120%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* === NUEVAS SECCIONES MARKETING === */
+
+      /* Por qué DAO'S GYM */
+      .why-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .why-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 32px 24px;
+        text-align: center;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .why-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--gold), var(--purple));
+        transform: scaleX(0);
+        transition: transform 0.4s;
+      }
+      .why-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px rgba(197, 165, 90, 0.15);
+        border-color: var(--gold);
+      }
+      .why-card:hover::before {
+        transform: scaleX(1);
+      }
+      .why-icon {
+        font-size: 2.5rem;
+        margin-bottom: 16px;
+        display: block;
+      }
+      .why-card h4 {
+        color: var(--gold);
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+      }
+      .why-card p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+
+      /* Contadores */
+      .counters-section {
+        background: linear-gradient(135deg, #1a1d27 0%, #0f1117 100%);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+      }
+      [data-theme="light"] .counters-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      }
+      .counters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 20px;
+        max-width: 900px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      .counter-item .counter-number {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: var(--gold);
+        line-height: 1;
+      }
+      .counter-item .counter-label {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 6px;
+      }
+
+      /* Testimonios */
+      .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .testimonial-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px;
+        position: relative;
+      }
+      .testimonial-card::before {
+        content: '"';
+        position: absolute;
+        top: 12px;
+        left: 20px;
+        font-size: 4rem;
+        color: var(--gold);
+        opacity: 0.2;
+        font-family: Georgia, serif;
+        line-height: 1;
+      }
+      .testimonial-text {
+        color: var(--text);
+        font-style: italic;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 16px;
+        padding-top: 16px;
+      }
+      .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .testimonial-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--gold), var(--purple));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #fff;
+        font-size: 1.1rem;
+      }
+      .testimonial-name {
+        color: var(--gold);
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+      .testimonial-time {
+        color: var(--text-muted);
+        font-size: 0.75rem;
+      }
+
+      /* Promo Banner */
+      .promo-section {
+        background: linear-gradient(
+          135deg,
+          rgba(197, 165, 90, 0.1) 0%,
+          rgba(108, 92, 231, 0.1) 100%
+        );
+        border: 1px solid var(--gold);
+        border-radius: var(--radius);
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 48px 32px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .promo-section::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(
+          circle,
+          rgba(197, 165, 90, 0.15) 0%,
+          transparent 70%
+        );
+        border-radius: 50%;
+      }
+      .promo-badge {
+        display: inline-block;
+        background: var(--gold);
+        color: #000;
+        font-weight: 700;
+        padding: 6px 18px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 16px;
+      }
+      .promo-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+      .promo-title span {
+        color: var(--gold);
+      }
+      .promo-subtitle {
+        color: var(--text-muted);
+        font-size: 1rem;
+        margin-bottom: 8px;
+      }
+      .promo-detail {
+        color: var(--gold);
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 24px;
+      }
+
+      /* Ubicación */
+      .location-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .location-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px;
+      }
+      .location-card h4 {
+        color: var(--gold);
+        margin-bottom: 16px;
+        font-size: 1.05rem;
+      }
+      .location-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 14px;
+        color: var(--text);
+        font-size: 0.9rem;
+      }
+      .location-item .loc-icon {
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+      .horario-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .horario-table td {
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
+      }
+      .horario-table td:last-child {
+        text-align: right;
+        color: var(--gold);
+        font-weight: 600;
+      }
+
+      /* Login Overlay */
+      #loginOverlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: var(--bg);
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .login-box {
+        background: var(--surface);
+        padding: 40px;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+      .login-box h2 {
+        color: var(--gold);
+        margin-bottom: 8px;
+      }
+      .login-box p {
+        color: var(--text-muted);
+        margin-bottom: 24px;
+        font-size: 0.9rem;
+      }
+
+      /* Modal */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 3000;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-overlay.show {
+        display: flex;
+      }
+      .modal {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 32px;
+        max-width: 420px;
+        width: 90%;
+        animation: modalIn 0.25s ease;
+      }
+      .modal h3 {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+        color: var(--text);
+      }
+      .modal p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+      }
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+      @keyframes modalIn {
+        from {
+          transform: scale(0.92);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* ─── FOOTER ─────────────────────────────── */
+      .footer {
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        padding: 40px;
+        text-align: center;
+      }
+      .footer img {
+        height: 50px;
+        margin-bottom: 12px;
+        border-radius: 8px;
+      }
+      .footer p {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+      }
+      .footer .credits {
+        color: var(--gold);
+        font-weight: 500;
+        margin-top: 16px;
+      }
+
+      /* ─── RESPONSIVE ─────────────────────────── */
+      @media (max-width: 840px) {
+        .navbar {
+          padding: 10px 16px;
+        }
+        .navbar-links {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: var(--surface);
+          flex-direction: column;
+          padding: 20px;
+          border-bottom: 1px solid var(--border);
+          display: none;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .navbar-links.show {
+          display: flex;
+        }
+        .menu-toggle {
+          display: block;
+        }
+        .section {
+          padding: 50px 20px;
+        }
+        .crud-section {
+          padding: 50px 16px;
+        }
+        .crud-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 520px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- LOGIN OVERLAY -->
+    <div id="loginOverlay">
+      <div class="login-box" style="position: relative">
+        <button
+          id="btnCloseLogin"
+          style="
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+          "
+        >
+          &times;
+        </button>
+        <img
+          src="img/logo.png"
+          alt="Logo"
+          style="height: 60px; border-radius: 8px; margin-bottom: 16px"
+        />
+        <h2>Acceso Administrativo</h2>
+        <p>Ingresa tus credenciales para acceder al sistema.</p>
+        <div class="form-group" style="text-align: left">
+          <label>Usuario</label>
+          <input type="text" id="loginUser" placeholder="admin" />
+        </div>
+        <div class="form-group" style="text-align: left">
+          <label>Contraseña</label>
+          <input type="password" id="loginPass" placeholder="••••••••" />
+        </div>
+        <button
+          class="btn btn-primary"
+          id="btnLogin"
+          style="width: 100%; margin-top: 16px; padding: 12px"
+        >
+          Ingresar
+        </button>
+      </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+      <a href="#inicio" class="navbar-logo">
+        <img src="img/logo.png" alt="Logo DAO'S GYM" />
+        <span>DAO'S GYM</span>
+      </a>
+      <button class="menu-toggle" id="menuToggle">☰</button>
+      <ul class="navbar-links" id="navLinks">
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#membresias">Membresías</a></li>
+        <li><a href="#registro-publico">Únete</a></li>
+        <li><a href="#" id="linkGestion">Gestión</a></li>
+        <li>
+          <button class="theme-toggle" id="themeToggle" title="Cambiar Tema">
+            ☀️
+          </button>
+        </li>
+        <li>
+          <button
+            class="btn btn-danger btn-sm"
+            id="btnLogout"
+            style="padding: 6px 12px; font-size: 0.8rem; display: none"
+          >
+            Salir
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="inicio">
+      <div class="hero-content">
+        <img src="img/logo.png" alt="DAO'S GYM Logo" />
+        <h1>DAO'S GYM</h1>
+        <h2>Strength & Fitness</h2>
+        <p>
+          Más de 10 años transformando vidas en Tecámac. Tu gimnasio de
+          confianza con el mejor precio y trato personalizado.
+        </p>
+        <a href="#registro-publico" class="btn-cta">¡Únete Ahora!</a>
+        <a
+          href="#porque"
+          style="
+            color: var(--gold);
+            display: block;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            text-decoration: none;
+          "
+          >¿Por qué elegirnos? ↓</a
+        >
+      </div>
+    </section>
+
+    <!-- ¿POR QUÉ DAO'S GYM? -->
+    <section class="section fade-in" id="porque">
+      <h2 class="section-title">¿Por qué elegir DAO'S GYM?</h2>
+      <p class="section-subtitle">
+        Lo que nos hace diferentes de cualquier otro gimnasio.
+      </p>
+      <div class="why-grid">
+        <div class="why-card">
+          <span class="why-icon">💪</span>
+          <h4>Trato Personalizado</h4>
+          <p>
+            No eres un número. Aquí el dueño te conoce por tu nombre, te motiva
+            y te acompaña en cada paso de tu transformación.
+          </p>
+        </div>
+        <div class="why-card">
+          <span class="why-icon">💰</span>
+          <h4>El Precio Más Justo</h4>
+          <p>
+            Desde $150/mes. Sin contratos forzosos, sin letras chiquitas, sin
+            cargos ocultos. Pagas solo lo que necesitas.
+          </p>
+        </div>
+        <div class="why-card">
+          <span class="why-icon">🏠</span>
+          <h4>Ambiente Familiar</h4>
+          <p>
+            Un gimnasio donde todos se apoyan. Sin miedo, sin juicios, sin egos.
+            Tu segunda casa para entrenar a gusto.
+          </p>
+        </div>
+        <div class="why-card">
+          <span class="why-icon">🕐</span>
+          <h4>Horario Amplio</h4>
+          <p>
+            De lunes a viernes de 6 AM a 10 PM y sábados de 7 AM a 2 PM. Porque
+            tu vida no se ajusta a un horario fijo.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTADORES -->
+    <section
+      class="counters-section section fade-in"
+      style="padding: 50px 20px"
+    >
+      <div class="counters-grid">
+        <div class="counter-item">
+          <div class="counter-number" data-target="100">0</div>
+          <div class="counter-label">Clientes Activos</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-number" data-target="10" data-prefix="+">0</div>
+          <div class="counter-label">Años de Experiencia</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-number" data-target="20" data-prefix="+">0</div>
+          <div class="counter-label">Equipos Disponibles</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-number" data-target="150" data-prefix="$">0</div>
+          <div class="counter-label">Mensualidad Desde</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTRODUCCIÓN -->
+    <section class="section" id="nosotros">
+      <h2 class="section-title">Introducción</h2>
+      <p>
+        El Gimnasio DAO'S GYM es un emprendimiento local que, si bien ofrece un
+        servicio valioso a la comunidad, actualmente gestiona la información de
+        sus clientes y finanzas de manera manual, utilizando cuadernos o
+        libretas. Este enfoque, aunque funcional a pequeña escala, presenta
+        limitaciones significativas en términos de eficiencia, seguridad de la
+        información, y capacidad de análisis para la toma de decisiones.
+      </p>
+      <p>
+        El presente proyecto se centra en el diseño e implementación de un
+        sistema de gestión de base de datos robusto y eficiente para DAO'S GYM.
+        Este sistema busca digitalizar y centralizar la información esencial del
+        gimnasio, migrando la gestión de datos de un formato físico y
+        susceptible a errores o pérdidas, a una estructura digital segura y
+        accesible.
+      </p>
+
+      <h3>Objetivo del Proyecto</h3>
+      <p>
+        El objetivo principal de este proyecto es desarrollar una base de datos
+        relacional que permita al Gimnasio DAO'S GYM:
+      </p>
+      <ol>
+        <li>
+          Digitalizar y centralizar el registro de clientes, membresías y pagos.
+        </li>
+        <li>
+          Optimizar la gestión de las membresías, permitiendo un control claro
+          de las fechas de inicio y vencimiento.
+        </li>
+        <li>
+          Facilitar el seguimiento del historial de pagos por cliente, mejorando
+          la administración financiera.
+        </li>
+        <li>
+          Minimizar los errores humanos asociados a la gestión manual de la
+          información.
+        </li>
+      </ol>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- PROBLEMÁTICA -->
+    <section class="section" id="problematica">
+      <h2 class="section-title">Problemática y Necesidad a Solucionar</h2>
+      <p class="section-subtitle">
+        La operación actual del gimnasio se basa en registros manuales en
+        libretas, lo que genera las siguientes problemáticas:
+      </p>
+      <ol>
+        <li>
+          <strong>Riesgo de Pérdida de Información:</strong> La información
+          (nombres, edades, fechas de vencimiento, historial de pagos) es
+          vulnerable a pérdidas, daños o deterioro de los registros físicos.
+        </li>
+        <li>
+          <strong>Ineficiencia en la Consulta y Búsqueda:</strong> La búsqueda
+          manual de datos específicos de un cliente o la revisión del estado de
+          su membresía consume tiempo y esfuerzo.
+        </li>
+        <li>
+          <strong>Falta de Identificación Única y Trazabilidad:</strong> La
+          ausencia de un ID o número de socio dificulta la identificación
+          unívoca del cliente, lo que podría llevar a confusiones o duplicidad
+          de registros.
+        </li>
+        <li>
+          <strong>Dificultad en el Análisis Financiero:</strong> Al registrar
+          los pagos únicamente en una libreta, resulta complicado generar
+          reportes rápidos sobre ingresos totales, membresías activas o
+          proyecciones financieras.
+        </li>
+        <li>
+          <strong>Proceso de Renovación Reactivo:</strong> La gestión de las
+          renovaciones es reactiva ("Le digo al cliente cuando vence"), en lugar
+          de proactiva, lo que podría afectar la retención de clientes.
+        </li>
+      </ol>
+      <p>
+        La necesidad primordial de DAO'S GYM es migrar a un sistema que
+        garantice la integridad, seguridad y disponibilidad de los datos,
+        liberando al propietario de las tareas administrativas manuales. La base
+        de datos propuesta abordará directamente esta necesidad al estructurar
+        la información de clientes, membresías (Mensualidad $150, Anualidad
+        $1,300) e historial de pagos (solo en efectivo).
+      </p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ENTREVISTA -->
+    <section class="section" id="entrevista">
+      <h2 class="section-title">Entrevista</h2>
+      <p class="section-subtitle">
+        Respuestas obtenidas del propietario del gimnasio:
+      </p>
+      <div class="interview-grid">
+        <div class="interview-item">
+          <div class="question">¿Qué datos se registran de cada cliente?</div>
+          <div class="answer">Su nombre completo y su edad.</div>
+        </div>
+        <div class="interview-item">
+          <div class="question">¿Se les asigna un ID o número de socio?</div>
+          <div class="answer">Yo personalmente no le agrego eso.</div>
+        </div>
+        <div class="interview-item">
+          <div class="question">¿Qué tipos de membresías existen?</div>
+          <div class="answer">La mensualidad y la anualidad.</div>
+        </div>
+        <div class="interview-item">
+          <div class="question">¿Cuál es el costo de cada tipo?</div>
+          <div class="answer">
+            La mensualidad tiene costo de 150 pesos y la anualidad 1300 pesos.
+          </div>
+        </div>
+        <div class="interview-item">
+          <div class="question">¿Se registra fecha de inicio y fin?</div>
+          <div class="answer">
+            Sí, guardo el día y mes que se registra para saber cuándo vence.
+          </div>
+        </div>
+        <div class="interview-item">
+          <div class="question">¿Qué métodos de pago aceptan?</div>
+          <div class="answer">Solo efectivo.</div>
+        </div>
+        <div class="interview-item">
+          <div class="question">¿Un cliente puede tener varios pagos?</div>
+          <div class="answer">
+            Pues sí, varios pagos cada que renueva la membresía.
+          </div>
+        </div>
+        <div class="interview-item">
+          <div class="question">
+            ¿Una membresía pertenece a un solo cliente o puede compartirse?
+          </div>
+          <div class="answer">No, no se puede compartir.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- MODELO RELACIONAL -->
+    <section class="section" id="modelo">
+      <h2 class="section-title">Modelo Relacional</h2>
+      <p class="section-subtitle">
+        Estructura de la base de datos propuesta para DAO'S GYM
+      </p>
+
+      <div
+        style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 20px;
+        "
+      >
+        <div class="model-container">
+          <h4>Cliente</h4>
+          <table class="model-table">
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Tipo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>ID_Cliente</strong> 🔑</td>
+                <td>INT (PK)</td>
+              </tr>
+              <tr>
+                <td>Nombre</td>
+                <td>VARCHAR(30)</td>
+              </tr>
+              <tr>
+                <td>Apellido_P</td>
+                <td>VARCHAR(30)</td>
+              </tr>
+              <tr>
+                <td>Apellido_M</td>
+                <td>VARCHAR(30)</td>
+              </tr>
+              <tr>
+                <td>Edad</td>
+                <td>VARCHAR(30)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="model-container">
+          <h4>Inscripción</h4>
+          <table class="model-table">
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Tipo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>ID_Inscripcion</strong> 🔑</td>
+                <td>INT (PK)</td>
+              </tr>
+              <tr>
+                <td>Fecha_Inicio</td>
+                <td>DATE</td>
+              </tr>
+              <tr>
+                <td>Fecha_Fin</td>
+                <td>DATE</td>
+              </tr>
+              <tr>
+                <td>ID_Cliente</td>
+                <td>INT (FK)</td>
+              </tr>
+              <tr>
+                <td>ID_Membresia</td>
+                <td>INT (FK)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="model-container">
+          <h4>Membresía</h4>
+          <table class="model-table">
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Tipo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>ID_Membresia</strong> 🔑</td>
+                <td>INT (PK)</td>
+              </tr>
+              <tr>
+                <td>Tipo</td>
+                <td>VARCHAR(30)</td>
+              </tr>
+              <tr>
+                <td>Duración</td>
+                <td>VARCHAR(30)</td>
+              </tr>
+              <tr>
+                <td>Costo</td>
+                <td>INT</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="model-container">
+          <h4>Pago</h4>
+          <table class="model-table">
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Tipo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>ID_Pago</strong> 🔑</td>
+                <td>INT (PK)</td>
+              </tr>
+              <tr>
+                <td>Monto</td>
+                <td>INT</td>
+              </tr>
+              <tr>
+                <td>Fecha_Pago</td>
+                <td>DATE</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- MEMBRESÍAS -->
+    <section class="section" id="membresias">
+      <h2 class="section-title">Nuestras Membresías</h2>
+      <p class="section-subtitle">
+        Elige el plan que mejor se adapte a ti. Solo aceptamos pagos en
+        efectivo.
+      </p>
+      <div class="membership-grid">
+        <div class="membership-card">
+          <h4>Mensualidad</h4>
+          <div class="price">$150 <span>MXN</span></div>
+          <div class="period">por mes</div>
+          <ul>
+            <li>Acceso completo al gimnasio</li>
+            <li>Uso de todo el equipo</li>
+            <li>Horario completo</li>
+            <li>Renovación mensual</li>
+          </ul>
+          <a
+            href="#gestion"
+            class="btn-cta"
+            style="width: 100%; text-align: center"
+            >Registrarse</a
+          >
+        </div>
+        <div class="membership-card featured">
+          <h4>Anualidad</h4>
+          <div class="price">$1,300 <span>MXN</span></div>
+          <div class="period">por año — Ahorras $500</div>
+          <ul>
+            <li>Acceso completo al gimnasio</li>
+            <li>Uso de todo el equipo</li>
+            <li>Horario completo</li>
+            <li>Mejor precio por mes</li>
+          </ul>
+          <a
+            href="#gestion"
+            class="btn-cta"
+            style="width: 100%; text-align: center"
+            >Registrarse</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIOS -->
+    <section class="section fade-in" id="testimonios">
+      <h2 class="section-title">Lo que dicen nuestros miembros</h2>
+      <p class="section-subtitle">Historias reales de personas como tú.</p>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <p class="testimonial-text">
+            Probé gimnasios más caros y nunca me sentí cómodo. En DAO'S GYM
+            encontré mi lugar. El ambiente es increíble y el dueño siempre te
+            echa porras.
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">C</div>
+            <div>
+              <div class="testimonial-name">Carlos M.</div>
+              <div class="testimonial-time">Miembro desde hace 3 años</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-text">
+            Me daba pena ir al gimnasio porque era principiante. Aquí nadie te
+            juzga, todos te ayudan. Llevo 8 meses y ya bajé 15 kilos. ¡Lo
+            recomiendo al 100%!
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">L</div>
+            <div>
+              <div class="testimonial-name">Laura G.</div>
+              <div class="testimonial-time">Miembro desde hace 8 meses</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-text">
+            Lo mejor es el precio. Por $150 al mes tienes acceso a todo el
+            equipo. Ningún otro gimnasio de la zona te da eso. Y ahora con la
+            promo de proteína, está regalado.
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">R</div>
+            <div>
+              <div class="testimonial-name">Ricardo T.</div>
+              <div class="testimonial-time">Miembro desde hace 1 año</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN MULTIMEDIA -->
+    <section
+      class="section fade-in"
+      id="multimedia"
+      style="background-color: var(--surface)"
+    >
+      <h2 class="section-title">Conoce DAO'S GYM</h2>
+      <p class="section-subtitle">Mira y escucha lo que nos hace diferentes.</p>
+      <div
+        style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 24px;
+          max-width: 900px;
+          margin: 0 auto;
+        "
+      >
+        <!-- VIDEO -->
+        <div class="card" style="text-align: center">
+          <h4 style="color: var(--gold); margin-bottom: 12px">
+            🎬 Video de las Instalaciones
+          </h4>
+          <video
+            width="100%"
+            controls
+            style="border-radius: 8px; max-height: 300px; background: #000"
+          >
+            <source src="media/gym_video.mp4" type="video/mp4" />
+            Tu navegador no soporta el elemento de video.
+          </video>
+          <p
+            style="
+              color: var(--text-muted);
+              font-size: 0.85rem;
+              margin-top: 8px;
+            "
+          >
+            Conoce nuestras instalaciones de primera clase.
+          </p>
+        </div>
+        <!-- AUDIO -->
+        <div class="card" style="text-align: center">
+          <h4 style="color: var(--gold); margin-bottom: 12px">
+            🎵 Audio del Gym
+          </h4>
+          <div style="padding: 30px 0">
+            <p style="font-size: 3rem; margin-bottom: 16px">🎧</p>
+            <p style="color: var(--text-muted); margin-bottom: 16px">
+              Escucha la opinion del dueño de DAO'S GYM:
+            </p>
+            <audio controls style="width: 100%; max-width: 350px">
+              <source src="media/gym_audio.mp3" type="audio/mpeg" />
+              Tu navegador no soporta el elemento de audio.
+            </audio>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROMO BANNER -->
+    <section class="section fade-in" id="promo">
+      <div class="promo-section">
+        <span class="promo-badge">🔥 Oferta Especial</span>
+        <h3 class="promo-title">Tu primera visita es <span>GRATIS</span></h3>
+        <p class="promo-subtitle">
+          Ven, conoce las instalaciones y entrena un día sin compromiso.
+        </p>
+        <p class="promo-detail">
+          Además: Paquete de primera mensualidad por $250 que incluye Proteína +
+          Creatina 🎁
+        </p>
+        <a
+          href="#registro-publico"
+          class="btn-cta"
+          style="display: inline-block"
+          >¡Quiero mi visita gratis!</a
+        >
+      </div>
+    </section>
+
+    <!-- SECCIÓN REGISTRO PÚBLICO (PHP) -->
+    <section id="registro-publico" class="section fade-in">
+      <h2 class="section-title">Únete a la familia</h2>
+      <div class="card" style="max-width: 600px; margin: 0 auto">
+        <p
+          style="
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+          "
+        >
+          ¡Regístrate ahora y comienza tu transformación hoy mismo!
+        </p>
+
+        <!-- Formulario que envía a PHP -->
+        <form method="POST" action="php/registro.php" id="formRegistroPublico">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nombre(s)</label>
+              <input
+                type="text"
+                name="nombre"
+                id="regPublicoNombre"
+                placeholder="Tu nombre"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Apellido Paterno</label>
+              <input
+                type="text"
+                name="apellido_p"
+                id="regPublicoApP"
+                placeholder="Tu apellido paterno"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Apellido Materno</label>
+              <input
+                type="text"
+                name="apellido_m"
+                id="regPublicoApM"
+                placeholder="Tu apellido materno"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Edad</label>
+              <input
+                type="number"
+                name="edad"
+                id="regPublicoEdad"
+                placeholder="Tu edad"
+                min="1"
+                max="120"
+                required
+              />
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 24px">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="btnRegistroPublico"
+              style="
+                width: 100%;
+                max-width: 300px;
+                padding: 12px;
+                font-size: 1.1rem;
+              "
+            >
+              Registrarme
+            </button>
+          </div>
+        </form>
+        <p style="text-align: center; margin-top: 12px">
+          <a
+            href="php/clientes.php"
+            style="color: var(--gold); font-size: 0.85rem"
+            >Ver lista de clientes registrados (PHP) →</a
+          >
+        </p>
+      </div>
+    </section>
+
+    <!-- UBICACIÓN Y HORARIOS -->
+    <section
+      class="section fade-in"
+      id="ubicacion"
+      style="background-color: var(--surface)"
+    >
+      <h2 class="section-title">Encuéntranos</h2>
+      <p class="section-subtitle">Estamos más cerca de lo que piensas.</p>
+      <div class="location-grid">
+        <div class="location-card">
+          <h4>📍 Dirección y Contacto</h4>
+          <div class="location-item">
+            <span class="loc-icon">🏠</span>
+            <span
+              >Dolores 378, Sta María Ajoloapan, 55750, Tecámac, Estado de
+              México</span
+            >
+          </div>
+          <div class="location-item">
+            <span class="loc-icon">📱</span>
+            <span
+              ><a
+                href="https://wa.me/525631198592"
+                style="color: var(--gold); text-decoration: none"
+                >56 3119 8592</a
+              >
+              (WhatsApp)</span
+            >
+          </div>
+          <div class="location-item">
+            <span class="loc-icon">💬</span>
+            <span>Escríbenos por WhatsApp para agendar tu visita gratis</span>
+          </div>
+        </div>
+        <div class="location-card">
+          <h4>🕐 Horarios de Atención</h4>
+          <table class="horario-table">
+            <tr>
+              <td>Lunes a Viernes</td>
+              <td>6:00 AM — 10:00 PM</td>
+            </tr>
+            <tr>
+              <td>Sábado</td>
+              <td>7:00 AM — 2:00 PM</td>
+            </tr>
+            <tr>
+              <td>Domingo</td>
+              <td style="color: var(--danger)">Cerrado</td>
+            </tr>
+          </table>
+          <p
+            style="
+              color: var(--text-muted);
+              font-size: 0.8rem;
+              margin-top: 16px;
+            "
+          >
+            * Horarios sujetos a cambios en días festivos.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- CRUD SECTION -->
+    <section
+      class="crud-section fade-in"
+      id="gestion"
+      style="display: none; padding-top: 100px"
+    >
+      <h2 class="section-title">Panel de Gestión</h2>
+      <p class="section-subtitle">
+        Administra clientes, membresías, inscripciones y pagos desde un solo
+        lugar.
+      </p>
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="tab-dashboard">
+          Dashboard
+        </button>
+        <button class="tab-btn" data-tab="tab-clientes">Clientes</button>
+        <button class="tab-btn" data-tab="tab-membresias">Membresías</button>
+        <button class="tab-btn" data-tab="tab-inscripciones">
+          Inscripciones
+        </button>
+        <button class="tab-btn" data-tab="tab-pagos">Pagos</button>
+      </div>
+
+      <!-- TAB: DASHBOARD -->
+      <div class="tab-content active" id="tab-dashboard">
+        <div class="dashboard-cards">
+          <div class="dash-card">
+            <h4>Total Clientes</h4>
+            <div class="value" id="statClientes">0</div>
+          </div>
+          <div class="dash-card">
+            <h4>Membresías Activas</h4>
+            <div class="value" id="statActivas">0</div>
+          </div>
+          <div class="dash-card">
+            <h4>Ingresos del Mes</h4>
+            <div class="value" id="statIngresos">$0</div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <h4 style="color: var(--text-muted); margin-bottom: 16px">
+            Ingresos Recientes
+          </h4>
+          <canvas id="dashboardChart"></canvas>
+        </div>
+      </div>
+
+      <!-- TAB: CLIENTES -->
+      <div class="tab-content" id="tab-clientes">
+        <div class="crud-layout">
+          <!-- FORM PANEL -->
+          <div class="card" id="cardForm_clientes">
+            <div class="card-title">
+              <span class="icon">📋</span>
+              <span id="formTitle_clientes">Nuevo Cliente</span>
+            </div>
+            <div class="search-id-box">
+              <input
+                type="number"
+                id="searchId_clientes"
+                placeholder="Buscar por ID..."
+                min="1"
+              />
+              <button id="btnSearchId_clientes" title="Buscar">🔍</button>
+            </div>
+            <input type="hidden" id="editId_clientes" />
+            <div class="form-group">
+              <label>Nombre</label
+              ><input type="text" id="c_nombre" maxlength="30" />
+              <div class="field-error" id="err_c_nombre"></div>
+            </div>
+            <div class="form-group">
+              <label>Apellido Paterno</label
+              ><input type="text" id="c_ap" maxlength="30" />
+              <div class="field-error" id="err_c_ap"></div>
+            </div>
+            <div class="form-group">
+              <label>Apellido Materno</label
+              ><input type="text" id="c_am" maxlength="30" />
+              <div class="field-error" id="err_c_am"></div>
+            </div>
+            <div class="form-group">
+              <label>Edad</label
+              ><input type="number" id="c_edad" min="1" max="120" />
+              <div class="field-error" id="err_c_edad"></div>
+            </div>
+            <div class="form-buttons">
+              <button class="btn btn-primary" id="btnSubmit_clientes">
+                Registrar
+              </button>
+              <button
+                class="btn btn-secondary"
+                id="btnCancel_clientes"
+                style="display: none"
+              >
+                Cancelar
+              </button>
+            </div>
+            <div class="selection-info" id="selectionInfo_clientes"></div>
+            <div class="crud-actions" id="crudActions_clientes">
+              <button class="btn btn-warning" id="btnEdit_clientes">
+                ✏️ Editar
+              </button>
+              <button class="btn btn-danger" id="btnDelete_clientes">
+                🗑️ Eliminar
+              </button>
+            </div>
+          </div>
+          <!-- TABLE PANEL -->
+          <div class="card">
+            <div
+              class="card-title"
+              style="justify-content: space-between; display: flex; width: 100%"
+            >
+              <span><span class="icon">📊</span> Clientes</span>
+              <button class="btn btn-secondary btn-sm" id="btnExport_clientes">
+                CSV
+              </button>
+            </div>
+            <div class="table-search">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" /></svg
+              ><input
+                type="text"
+                id="searchTable_clientes"
+                placeholder="Buscar..."
+              />
+            </div>
+            <div class="record-count" id="recordCount_clientes">
+              0 registros
+            </div>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Ap. Paterno</th>
+                    <th>Ap. Materno</th>
+                    <th>Edad</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla_clientes">
+                  <tr>
+                    <td colspan="5" class="empty-state">
+                      <div class="loader"><div class="spinner"></div></div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: MEMBRESÍAS -->
+      <div class="tab-content" id="tab-membresias">
+        <div class="crud-layout">
+          <div class="card">
+            <div class="card-title">
+              <span class="icon">📋</span>
+              <span id="formTitle_membresias">Nueva Membresía</span>
+            </div>
+            <input type="hidden" id="editId_membresias" />
+            <div class="form-group">
+              <label>Tipo (Ej. Mensualidad)</label
+              ><input type="text" id="m_tipo" maxlength="30" />
+              <div class="field-error" id="err_m_tipo"></div>
+            </div>
+            <div class="form-group">
+              <label>Duración (Ej. 1 Mes)</label
+              ><input type="text" id="m_duracion" maxlength="30" />
+              <div class="field-error" id="err_m_duracion"></div>
+            </div>
+            <div class="form-group">
+              <label>Costo (MXN)</label
+              ><input type="number" id="m_costo" min="0" />
+              <div class="field-error" id="err_m_costo"></div>
+            </div>
+            <div class="form-buttons">
+              <button class="btn btn-primary" id="btnSubmit_membresias">
+                Registrar
+              </button>
+              <button
+                class="btn btn-secondary"
+                id="btnCancel_membresias"
+                style="display: none"
+              >
+                Cancelar
+              </button>
+            </div>
+            <div class="selection-info" id="selectionInfo_membresias"></div>
+            <div class="crud-actions" id="crudActions_membresias">
+              <button class="btn btn-warning" id="btnEdit_membresias">
+                ✏️ Editar
+              </button>
+              <button class="btn btn-danger" id="btnDelete_membresias">
+                🗑️ Eliminar
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <div
+              class="card-title"
+              style="justify-content: space-between; display: flex; width: 100%"
+            >
+              <span><span class="icon">📊</span> Membresías</span>
+            </div>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Tipo</th>
+                    <th>Duración</th>
+                    <th>Costo</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla_membresias"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: INSCRIPCIONES -->
+      <div class="tab-content" id="tab-inscripciones">
+        <div class="crud-layout">
+          <div class="card">
+            <div class="card-title">
+              <span class="icon">📋</span>
+              <span id="formTitle_inscripciones">Nueva Inscripción</span>
+            </div>
+            <input type="hidden" id="editId_inscripciones" />
+            <div class="form-group">
+              <label>Cliente</label>
+              <select
+                id="i_cliente"
+                style="
+                  width: 100%;
+                  padding: 10px;
+                  background: var(--bg);
+                  border: 1px solid var(--border);
+                  color: var(--text);
+                  border-radius: 8px;
+                "
+              ></select>
+              <div class="field-error" id="err_i_cliente"></div>
+            </div>
+            <div class="form-group">
+              <label>Membresía</label>
+              <select
+                id="i_membresia"
+                style="
+                  width: 100%;
+                  padding: 10px;
+                  background: var(--bg);
+                  border: 1px solid var(--border);
+                  color: var(--text);
+                  border-radius: 8px;
+                "
+              ></select>
+              <div class="field-error" id="err_i_membresia"></div>
+            </div>
+            <div class="form-group">
+              <label>Fecha Inicio</label><input type="date" id="i_inicio" />
+              <div class="field-error" id="err_i_inicio"></div>
+            </div>
+            <div class="form-group">
+              <label>Fecha Fin</label><input type="date" id="i_fin" />
+              <div class="field-error" id="err_i_fin"></div>
+            </div>
+            <div class="form-buttons">
+              <button class="btn btn-primary" id="btnSubmit_inscripciones">
+                Registrar
+              </button>
+              <button
+                class="btn btn-secondary"
+                id="btnCancel_inscripciones"
+                style="display: none"
+              >
+                Cancelar
+              </button>
+            </div>
+            <div class="selection-info" id="selectionInfo_inscripciones"></div>
+            <div class="crud-actions" id="crudActions_inscripciones">
+              <button class="btn btn-warning" id="btnEdit_inscripciones">
+                ✏️ Editar
+              </button>
+              <button class="btn btn-danger" id="btnDelete_inscripciones">
+                🗑️ Eliminar
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <div
+              class="card-title"
+              style="justify-content: space-between; display: flex; width: 100%"
+            >
+              <span><span class="icon">📊</span> Inscripciones</span>
+              <button
+                class="btn btn-secondary btn-sm"
+                id="btnExport_inscripciones"
+              >
+                CSV
+              </button>
+            </div>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Membresía</th>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla_inscripciones"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: PAGOS -->
+      <div class="tab-content" id="tab-pagos">
+        <div class="crud-layout">
+          <div class="card">
+            <div class="card-title">
+              <span class="icon">📋</span>
+              <span id="formTitle_pagos">Nuevo Pago</span>
+            </div>
+            <input type="hidden" id="editId_pagos" />
+            <div class="form-group">
+              <label>Cliente</label>
+              <select
+                id="p_cliente"
+                style="
+                  width: 100%;
+                  padding: 10px;
+                  background: var(--bg);
+                  border: 1px solid var(--border);
+                  color: var(--text);
+                  border-radius: 8px;
+                "
+              ></select>
+              <div class="field-error" id="err_p_cliente"></div>
+            </div>
+            <div class="form-group">
+              <label>Monto (MXN)</label
+              ><input type="number" id="p_monto" min="1" />
+              <div class="field-error" id="err_p_monto"></div>
+            </div>
+            <div class="form-group">
+              <label>Fecha de Pago</label><input type="date" id="p_fecha" />
+              <div class="field-error" id="err_p_fecha"></div>
+            </div>
+            <div class="form-buttons">
+              <button class="btn btn-primary" id="btnSubmit_pagos">
+                Registrar
+              </button>
+              <button
+                class="btn btn-secondary"
+                id="btnCancel_pagos"
+                style="display: none"
+              >
+                Cancelar
+              </button>
+            </div>
+            <div class="selection-info" id="selectionInfo_pagos"></div>
+            <div class="crud-actions" id="crudActions_pagos">
+              <button class="btn btn-warning" id="btnEdit_pagos">
+                ✏️ Editar
+              </button>
+              <button class="btn btn-danger" id="btnDelete_pagos">
+                🗑️ Eliminar
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <div
+              class="card-title"
+              style="justify-content: space-between; display: flex; width: 100%"
+            >
+              <span><span class="icon">📊</span> Historial de Pagos</span>
+              <button class="btn btn-secondary btn-sm" id="btnExport_pagos">
+                CSV
+              </button>
+            </div>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla_pagos"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- MODAL ELIMINAR -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal">
+        <h3>⚠️ Confirmar Eliminación</h3>
+        <p id="modalMsg">¿Estás seguro de eliminar a este cliente?</p>
+        <div class="modal-buttons">
+          <button class="btn btn-secondary" id="modalCancel">Cancelar</button>
+          <button class="btn btn-danger" id="modalConfirm">Eliminar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <img src="img/logo.png" alt="DAO'S GYM" />
+      <p>
+        <strong style="color: var(--gold)">DAO'S GYM</strong> — Strength &
+        Fitness
+      </p>
+      <p>Sistema de gestión digital de clientes y membresías</p>
+      <p class="credits">
+        Proyecto desarrollado para la materia: Administra Bases de Datos en un
+        Sistema de Información
+      </p>
+      <p style="color: var(--text-muted); margin-top: 8px">
+        Ciclo Escolar 2026 – 2026 | Semestre: Cuarto | Docente: Ing. Ernesto
+        Palomo García
+      </p>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script src="app.js"></script>
+  </body>
+</html>
