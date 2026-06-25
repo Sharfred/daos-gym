@@ -864,6 +864,48 @@
         line-height: 1.6;
       }
 
+      /* Equipos */
+      .equipment-section {
+        margin-top: 60px;
+      }
+      .equipment-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+      .equipment-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        text-align: center;
+        transition: transform 0.3s;
+      }
+      .equipment-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--gold);
+        box-shadow: 0 5px 15px rgba(197, 165, 90, 0.1);
+      }
+      .equipment-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-bottom: 1px solid var(--border);
+        background-color: var(--bg);
+      }
+      .equipment-card h4 {
+        color: var(--gold);
+        margin: 15px 0 5px;
+        font-size: 1.1rem;
+      }
+      .equipment-card p {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        padding: 0 15px 15px;
+        line-height: 1.4;
+      }
+
       /* Contadores */
       .counters-section {
         background: linear-gradient(135deg, #1a1d27 0%, #0f1117 100%);
@@ -1344,6 +1386,38 @@
           </p>
         </div>
       </div>
+
+      <div class="equipment-section">
+        <h3 class="section-subtitle" style="color: var(--gold); font-size: 1.5rem; margin-bottom: 10px; text-align: center;">Nuestro Mejor Equipo</h3>
+        <p class="section-subtitle" style="margin-bottom: 30px; font-size: 0.95rem; text-align: center;">Contamos con más de 20 máquinas especializadas. Aquí algunas de las favoritas:</p>
+        
+        <div class="equipment-grid">
+          <div class="equipment-card">
+            <!-- REEMPLAZA ESTA IMAGEN: img/placeholder_smith.jpg por el nombre real de tu foto -->
+            <img src="img/placeholder_smith.jpg" alt="Máquina Smith" onerror="this.src='https://via.placeholder.com/400x300/1e212b/c5a55a?text=Foto+Smith'" />
+            <h4>Máquina Smith</h4>
+            <p>Ideal para sentadillas y press con seguridad total gracias a su sistema de rieles guiados.</p>
+          </div>
+          <div class="equipment-card">
+            <!-- REEMPLAZA ESTA IMAGEN: img/placeholder_hack.jpg por el nombre real de tu foto -->
+            <img src="img/placeholder_hack.jpg" alt="Sentadilla Hack" onerror="this.src='https://via.placeholder.com/400x300/1e212b/c5a55a?text=Foto+Hack'" />
+            <h4>Sentadilla Hack</h4>
+            <p>Perfecta para enfocar el trabajo en los cuádriceps protegiendo al 100% tu zona lumbar.</p>
+          </div>
+          <div class="equipment-card">
+            <!-- REEMPLAZA ESTA IMAGEN: img/placeholder_doble_polea.jpg por el nombre real de tu foto -->
+            <img src="img/placeholder_doble_polea.jpg" alt="Doble Polea" onerror="this.src='https://via.placeholder.com/400x300/1e212b/c5a55a?text=Foto+Doble+Polea'" />
+            <h4>Doble Polea Cruzada</h4>
+            <p>Estación versátil para trabajar pecho, brazos y hombros manteniendo una tensión muscular continua.</p>
+          </div>
+          <div class="equipment-card">
+            <!-- REEMPLAZA ESTA IMAGEN: img/placeholder_espalda.jpg por el nombre real de tu foto -->
+            <img src="img/placeholder_espalda.jpg" alt="Polea Alta y Baja" onerror="this.src='https://via.placeholder.com/400x300/1e212b/c5a55a?text=Foto+Polea+Espalda'" />
+            <h4>Polea Alta/Baja para Espalda</h4>
+            <p>Desarrolla una espalda fuerte y ancha realizando jalones y remos de alto rendimiento.</p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- CONTADORES -->
@@ -1675,7 +1749,7 @@
             <li>Renovación mensual</li>
           </ul>
           <a
-            href="#gestion"
+            href="#unete"
             class="btn-cta"
             style="width: 100%; text-align: center"
             >Registrarse</a
@@ -1692,7 +1766,7 @@
             <li>Mejor precio por mes</li>
           </ul>
           <a
-            href="#gestion"
+            href="#unete"
             class="btn-cta"
             style="width: 100%; text-align: center"
             >Registrarse</a
